@@ -19,6 +19,21 @@ app.get('/token/:username', (req, res) => {
     });
 });
 
+app.post('/token/refresh', (req, res) => {
+    let body = req.body;
+    if (!body || !body.token) 
+        res.status(400).send('Invalid body');
+    else {
+        let decoded = jwt.decode(body.token);
+        let token = jwt.sign({id:'1',user:decoded.user}, 'iliketoken', {expiresIn: '30m'});
+        res.json({
+            success: true,
+            error: null,
+            token
+        });
+    }
+});
+
 app.get('/users', verifyToken, (req, res) => {
     db.getUsers(null,result => {
         res.send(result);
