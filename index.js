@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const db = require('./db');
 const app = express();
 
 app.use(express.json());
@@ -18,14 +19,30 @@ app.get('/token/:username', (req, res) => {
     });
 });
 
-app.post('/profile', verifyToken, (req,res) => {
-    res.send('Profile OK');
+app.get('/users', verifyToken, (req, res) => {
+    db.getUsers(null,result => {
+        res.send(result);
+    });
 });
 
-app.post('/list', verifyToken, (req,res) => {
-    res.send('List OK');
+app.get('/user/:id', verifyToken, (req, res) => {
+    let id = req.params.id;
+    db.getUsers(id, result => {
+        res.send(result);
+    });
 });
 
+app.post('/newUser', verifyToken, (req, res) => {
+    console.log('Start newUser');
+    let body = req.body;
+    if (!body || !body.username) 
+        res.status(400).send('Invalid body');
+    else {
+        db.insertUser(body, result => {
+            res.send(result);
+        });
+    }
+});
 
 //Validate JWT Token against a secrey key
 function verifyToken(req,res,next) {
