@@ -33,12 +33,22 @@ app.get('/user/:id', verifyToken, (req, res) => {
 });
 
 app.post('/newUser', verifyToken, (req, res) => {
-    console.log('Start newUser');
     let body = req.body;
     if (!body || !body.username) 
         res.status(400).send('Invalid body');
     else {
         db.insertUser(body, result => {
+            res.send(result);
+        });
+    }
+});
+
+app.post('/updateUser', verifyToken, (req, res) => {
+    let body = req.body;
+    if (!body && !body.username && !body.id) 
+        res.status(400).send('Invalid body');
+    else {
+        db.updateUser(body, result => {
             res.send(result);
         });
     }

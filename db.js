@@ -34,3 +34,14 @@ exports.insertUser = function(body,done) {
         done(result);
     });
 }
+
+exports.updateUser = function(body,done) {
+    let query = 'UPDATE users SET username = ? where id = ? ';
+    let filters = [body.username, body.id];
+    connection.query(query, filters, (err, result) => {
+        if (err) {
+            throw err;
+        }
+        done(result);
+    });
+}
